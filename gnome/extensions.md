@@ -13,5 +13,5 @@ This is a list of all Gnome extensions I use.
 - [Workspace Indicator](https://extensions.gnome.org/extension/21/workspace-indicator/)
 - [Caffeine](https://extensions.gnome.org/extension/517/caffeine/)
 - [system-monitor](https://extensions.gnome.org/extension/120/system-monitor/)
-- 
-
+- [Sound Input & Output Device Chooser](https://extensions.gnome.org/extension/906/sound-output-device-chooser/) 
+- [Pomodoro Timer](http://gnomepomodoro.org/)
