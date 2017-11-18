@@ -2,6 +2,7 @@
 maximize=@as []
 toggle-maximized=['<Super>M']
 unmaximize=@as []
+close=['<Alt>F4', '<Super><Shift>Q']
 move-to-workspace-up=['<Super><Shift>Up']
 move-to-workspace-1=@as []
 switch-to-workspace-1=@as []
