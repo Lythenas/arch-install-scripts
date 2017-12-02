@@ -16,7 +16,6 @@ Plugin 'tpope/vim-surround'     " surround text easily with quotes/tags/...
 " Markdown
 Plugin 'godlygeek/tabular'
 Plugin 'plasticboy/vim-markdown'
-Plugin 'JamshedVesuna/vim-markdown-preview'
 
 " Add Plugins before this
 call vundle#end()               " required
