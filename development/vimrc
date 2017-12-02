@@ -1,0 +1,46 @@
+""" Vundle
+set nocompatible                " required
+filetype off                    " required
+
+" include Vundle in runtime path and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+Plugin 'VundleVim/Vundle.vim'   " required
+
+" Add Plugins after this
+
+Plugin 'airblade/vim-gitgutter' " git diff highlighting
+Plugin 'tpope/vim-surround'     " surround text easily with quotes/tags/...
+
+" Markdown
+Plugin 'godlygeek/tabular'
+Plugin 'plasticboy/vim-markdown'
+Plugin 'JamshedVesuna/vim-markdown-preview'
+
+" Add Plugins before this
+call vundle#end()               " required
+filetype plugin indent on       " required
+""" end Vundle
+
+" Markdown
+let g:vim_markdown_folding_disabled = 1 " disable folding
+let g:vim_markdown_math = 1             " enable LaTeX syntax in markdown
+let g:vim_markdown_preview_github = 1   " needed to use grip
+let g:vim_markdown_preview_browser='firefox'
+
+" reduce updatetime so git markers appear faster
+set updatetime=250
+
+" syntax highlighting by default
+syntax on
+
+" TABS = 4 SPACES!!!!
+set softtabstop=0 " always 0. otherwise comibnation of spaces and tabs will be used (BAD)
+set expandtab " inserts spaces when pressing tab
+set shiftwidth=4 " num spaces to insert for one tab
+set smarttab " if there are already spaces after the cursor jump to them instead of inserting new ones
+
+" mark two or more spaces after some text as an error
+syntax match DoubleSpace /\S\zs {2,}/
+highlight link DoubleSpace Error
