@@ -1,3 +1,6 @@
+""" Set Encoding
+set encoding=utf-8
+
 """ Vundle
 set nocompatible                " required
 filetype off                    " required
