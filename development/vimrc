@@ -1,18 +1,18 @@
-""" Set Encoding
-set encoding=utf-8
+" vim: fdm=marker foldenable
 
-""" Vundle
-set nocompatible                " required
-filetype off                    " required
+" toggle one fold under cursor with za
+" open all folds with zR, close all folds with zM 
 
-" include Vundle in runtime path and initialize
+" {{{ VUNDLE SETUP
+set nocompatible
+filetype off
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
-Plugin 'VundleVim/Vundle.vim'   " required
+Plugin 'VundleVim/Vundle.vim'
+" }}}
 
-" Add Plugins after this
-
+" {{{ PLUGINS
 Plugin 'airblade/vim-gitgutter' " git diff highlighting
 Plugin 'tpope/vim-surround'     " surround text easily with quotes/tags/...
 
@@ -21,29 +21,92 @@ Plugin 'godlygeek/tabular'
 Plugin 'plasticboy/vim-markdown'
 Plugin 'junegunn/goyo.vim'
 
-" Add Plugins before this
-call vundle#end()               " required
-filetype plugin indent on       " required
-""" end Vundle
-
 " Markdown
 let g:vim_markdown_folding_disabled = 1 " disable folding
 let g:vim_markdown_math = 1             " enable LaTeX syntax in markdown
 let g:vim_markdown_preview_github = 1   " needed to use grip
 let g:vim_markdown_preview_browser='firefox'
 
+" }}}
+
+" {{{ VUNDLE TEARDOWN
+call vundle#end()
+filetype plugin indent on
+" }}}
+
+" {{{ BASIC SETUP
+set encoding=utf-8
+syntax enable
+
+" Modelines (Comments at top of file e.g. # vim: ...)
+set modelines=2 " only check top 2 lines
+set modeline
+
+" Splits
+set splitright
+
+" send more characters for redraws
+set ttyfast
+
+" Search
+set ignorecase smartcase
+
+" Color scheme
+"color hhdgray
+
+" Enable mouse in all modes
+set mouse=a
+"set ttymouse=xterm2
+
+" {{{ FILE FINDING
+" Search down into subfolders
+set path+=**
+set wildmenu " display matchen when tab completing
+set wildmode=full " allow wildcards e.g. *
+
+" :find <filename in path> opens file in new buffer
+" -> :find <TAB> tab completion
+"    :find * fuzzy find
+" :b <buffername> displays buffer with name <buffername>
+" -> :b <TAB> tab completion
+" in insert mode: 
+"  - ^x^n for just this file autocompletion
+"  - ^x^f for filenames autocompletion
+"  - ^n switch back
+"  - ^p forth in suggestion list
+" }}}
+
+" {{{ FILE BROWSING
+"let g:netrw_banner=0
+let g:netrw_browser_split=4   " open in previous window
+let g:netrw_altv=1            " open splits to the right
+let g:netrw_liststyle=3       " tree view
+"let g:netrw_list_hide=netrw_gitignore#Hide()
+" }}}
+
+" }}}
+
+
 " reduce updatetime so git markers appear faster
 set updatetime=250
 
-" syntax highlighting by default
-syntax on
 
-" TABS = 4 SPACES!!!!
+" {{{ TABS = 4 SPACES!!!!
 set softtabstop=0 " always 0. otherwise comibnation of spaces and tabs will be used (BAD)
 set expandtab " inserts spaces when pressing tab
 set shiftwidth=4 " num spaces to insert for one tab
 set smarttab " if there are already spaces after the cursor jump to them instead of inserting new ones
+" }}}
 
 " mark two or more spaces after some text as an error
 syntax match DoubleSpace /\S\zs {2,}/
 highlight link DoubleSpace Error
+
+
+
+" enable search highlighting
+set hlsearch
+
+
+
+
