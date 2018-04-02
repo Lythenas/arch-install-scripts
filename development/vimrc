@@ -14,12 +14,13 @@ Plugin 'VundleVim/Vundle.vim'
 
 " {{{ PLUGINS
 
-" git diff highlighting
+""" Git Gutter 
+
 Plugin 'airblade/vim-gitgutter' 
 
-" Markdown
+set updatetime=250
 
-" {{{ Markdown
+""" Markdown
 
 Plugin 'godlygeek/tabular'
 Plugin 'plasticboy/vim-markdown'
@@ -38,8 +39,6 @@ let g:vim_markdown_math = 1
 " the link)
 let g:vim_markdown_follow_anchor = 1
 let g:vim_markdown_no_extensions_in_markdown = 1
-
-" Markdown }}}
 
 " PLUGINS }}}
 
@@ -63,10 +62,6 @@ set splitright
 set ttyfast
 
 " Search
-set ignorecase smartcase
-
-" Color scheme
-"color hhdgray
 
 " Enable mouse in all modes
 set mouse=a
@@ -75,11 +70,16 @@ set mouse=a
 " add support for '%' to jumpt to html-tags, etc.
 packadd! matchit
 
+" BASIC SETUP }}}
+
 " {{{ FILE FINDING
+
 " Search down into subfolders
 set path+=**
-set wildmenu " display matchen when tab completing
-set wildmode=full " allow wildcards e.g. *
+" display matches when tab completing
+set wildmenu 
+" allow wildcards e.g. *
+set wildmode=full 
 
 " :find <filename in path> opens file in new buffer
 " -> :find <TAB> tab completion
@@ -91,22 +91,16 @@ set wildmode=full " allow wildcards e.g. *
 "  - ^x^f for filenames autocompletion
 "  - ^n switch back
 "  - ^p forth in suggestion list
-" }}}
 
-" {{{ FILE BROWSING
+" file browsing
 "let g:netrw_banner=0
 let g:netrw_browser_split=4   " open in previous window
 let g:netrw_altv=1            " open splits to the right
 let g:netrw_liststyle=3       " tree view
-"let g:netrw_list_hide=netrw_gitignore#Hide()
-" }}}
+let g:netrw_list_hide=netrw_gitignore#Hide()
+"let g:netrw_list_hide.=',\(^\|\s\s\)\zs\.\S\+'
 
-" }}}
-
-
-" reduce updatetime so git markers appear faster
-set updatetime=250
-
+" FILE FINDING }}}
 
 " {{{ TABS = 4 SPACES!!!!
 set softtabstop=0 " always 0. otherwise comibnation of spaces and tabs will be used (BAD)
@@ -115,11 +109,8 @@ set shiftwidth=4 " num spaces to insert for one tab
 set smarttab " if there are already spaces after the cursor jump to them instead of inserting new ones
 " }}}
 
-" mark two or more spaces after some text as an error
-syntax match DoubleSpace /\S\zs {2,}/
-highlight link DoubleSpace Error
-
-
+" {{{ SEARCH
+set ignorecase smartcase
 
 " enable search highlighting
 set hlsearch
@@ -127,4 +118,21 @@ set hlsearch
 " add shortcut to turn search highlighting off
 nnoremap <F3> :noh<RETURN>
 
+" SEARCH }}}
+
+" {{{ SINPPETS
+
+" TODO
+" Example:
+" nnoremap ,html :-1read $HOME/.vim/snippets/skeleton.html<CR>
+
+" SNIPPETS }}}
+
+" {{{ OTHER
+
+" mark two or more spaces after some text as an error
+syntax match DoubleSpace /\S\zs {2,}/
+highlight link DoubleSpace Error
+
+" OTHER }}}
 
