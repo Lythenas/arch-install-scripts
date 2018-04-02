@@ -13,21 +13,35 @@ Plugin 'VundleVim/Vundle.vim'
 " }}}
 
 " {{{ PLUGINS
-Plugin 'airblade/vim-gitgutter' " git diff highlighting
-Plugin 'tpope/vim-surround'     " surround text easily with quotes/tags/...
+
+" git diff highlighting
+Plugin 'airblade/vim-gitgutter' 
 
 " Markdown
+
+" {{{ Markdown
+
 Plugin 'godlygeek/tabular'
 Plugin 'plasticboy/vim-markdown'
 Plugin 'junegunn/goyo.vim'
 
-" Markdown
-let g:vim_markdown_folding_disabled = 1 " disable folding
-let g:vim_markdown_math = 1             " enable LaTeX syntax in markdown
-let g:vim_markdown_preview_github = 1   " needed to use grip
-let g:vim_markdown_preview_browser='firefox'
+" disable folding
+"let g:vim_markdown_folding_disabled = 1 
+" auto-fit the table of contents window (opened with :Toc)
+let g:vim_markdown_toc_autofit = 1      
+" disable conceal (dont hide formatting syntax)
+let g:vim_markdown_conceal = 0          
+let g:tex_conceal = ""
+" enable LaTeX syntax in markdown
+let g:vim_markdown_math = 1             
+" follow links to other markdown files with 'ge' (does not require .md in
+" the link)
+let g:vim_markdown_follow_anchor = 1
+let g:vim_markdown_no_extensions_in_markdown = 1
 
-" }}}
+" Markdown }}}
+
+" PLUGINS }}}
 
 " {{{ VUNDLE TEARDOWN
 call vundle#end()
