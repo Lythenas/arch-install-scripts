@@ -72,6 +72,9 @@ set ignorecase smartcase
 set mouse=a
 "set ttymouse=xterm2
 
+" add support for '%' to jumpt to html-tags, etc.
+packadd! matchit
+
 " {{{ FILE FINDING
 " Search down into subfolders
 set path+=**
@@ -121,6 +124,7 @@ highlight link DoubleSpace Error
 " enable search highlighting
 set hlsearch
 
-
+" add shortcut to turn search highlighting off
+nnoremap <F3> :noh<RETURN>
 
 
