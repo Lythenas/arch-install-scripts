@@ -53,7 +53,9 @@ filetype plugin indent on
 " {{{ BASIC SETUP
 set encoding=utf-8
 syntax enable
+" Solarized Color Scheme
 set background=dark
+let g:solarized_termtrans=1
 colorscheme solarized
 
 
