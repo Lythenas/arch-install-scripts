@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
 
-sudo pacman -Syyu
+sudo pacman -Syu
+sudo yaourt -Syua
 rustup update
