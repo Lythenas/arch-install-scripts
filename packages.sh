@@ -1,3 +1,4 @@
 #!/ust/bin/env sh
 
-sudo pacman -Syyu pandoc
+sudo pacman -Syyu pandoc neofetch
+
