@@ -3,31 +3,77 @@
 " toggle one fold under cursor with za
 " open all folds with zR, close all folds with zM 
 
-" {{{ VUNDLE SETUP
+""" {{{ INFO
+" Plugins are loaded via the Vim internal package loader (as of version 8).
+" See :help packages
+"
+" The folder structure is as follows:
+" ~/.vim/pack
+"     colorschemes/opt
+"     using
+"         opt
+"         start
+"     trying-out
+"         opt
+"         start
+"
+" Colorschemes are in colorschemes/opt. They are loaded automatically when
+" calling :colorscheme somtehing.
+"
+" Plugins that are just being tested are in trying-out/opt and
+" trying-out/start.
+"
+" The other plugins are in using/opt and using/start.
+"
+" PLugins in the */start/* folders are loaded as usual.
+" E.g. */start/*/plugin/*.vim are loaded when vim starts.
+"      */start/*/syntax/*.vim are loaded when the syntax is needed.
+"      etc.
+" Plugins in the */opt/* folders are not loaded automatically (use the
+" packadd! somtehing command to load a plugin.
+" 
+" Plugins are downloaded and kept up-to-date with git. A update script is
+" coming soon.
+"
+""" INFO }}}
+
+" {{{ BASIC SETUP
 set nocompatible
-filetype off
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
+set encoding=utf-8
+filetype plugin indent on
+syntax enable
 
-Plugin 'VundleVim/Vundle.vim'
-" }}}
+" Solarized Color Scheme
+set background=dark
+let g:solarized_termtrans=1
+colorscheme solarized
 
-" {{{ PLUGINS
+" Modelines (Comments at top of file e.g. # vim: ...)
+set modelines=2 " only check top 2 lines
+set modeline
 
-""" Solarized Color Scheme
-Plugin 'altercation/vim-colors-solarized'
+" Splits
+set splitright
+
+" send more characters for redraws
+set ttyfast
+
+" Enable mouse in all modes
+set mouse=a
+"set ttymouse=xterm2
+
+" add support for '%' to jumpt to html-tags, etc.
+packadd! matchit
+
+" BASIC SETUP }}}
+
+""" {{{ PLUGIN CONFIGURATION
 
 """ Git Gutter 
-
-Plugin 'airblade/vim-gitgutter' 
 
 set updatetime=250
 
 """ Markdown
-
-Plugin 'godlygeek/tabular'
-Plugin 'plasticboy/vim-markdown'
-Plugin 'junegunn/goyo.vim'
 
 " disable folding
 "let g:vim_markdown_folding_disabled = 1 
@@ -43,43 +89,8 @@ let g:vim_markdown_math = 1
 let g:vim_markdown_follow_anchor = 1
 let g:vim_markdown_no_extensions_in_markdown = 1
 
-" PLUGINS }}}
-
-" {{{ VUNDLE TEARDOWN
-call vundle#end()
-filetype plugin indent on
-" }}}
-
-" {{{ BASIC SETUP
-set encoding=utf-8
-syntax enable
-" Solarized Color Scheme
-set background=dark
-let g:solarized_termtrans=1
-colorscheme solarized
-
-
-" Modelines (Comments at top of file e.g. # vim: ...)
-set modelines=2 " only check top 2 lines
-set modeline
-
-" Splits
-set splitright
-
-" send more characters for redraws
-set ttyfast
-
-" Search
-
-" Enable mouse in all modes
-set mouse=a
-"set ttymouse=xterm2
-
-" add support for '%' to jumpt to html-tags, etc.
-packadd! matchit
-
-" BASIC SETUP }}}
-
+" PLUGIN CONFIGURATION }}}
+"
 " {{{ FILE FINDING
 
 " Search down into subfolders
