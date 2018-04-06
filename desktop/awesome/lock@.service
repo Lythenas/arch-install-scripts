@@ -1,0 +1,13 @@
+[Unit]
+Description=User suspend actions
+Before=sleep.target
+
+[Service]
+User=%I
+Environment=DISPLAY=:0
+Environment=HOME=%h
+ExecStart=/usr/bin/lock
+ExecStartPost=/usr/bin/sleep 1
+
+[Install]
+WantedBy=sleep.target
