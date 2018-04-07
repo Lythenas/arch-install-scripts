@@ -4,7 +4,7 @@ function run {
     if ! pgrep $1 ;
     then
         echo "Running" $@
-        $@ &
+        ($@) &
     fi
 }
 
@@ -19,5 +19,5 @@ IDLE_TIME_TO_DIM=300 # 5min
 IDLE_TIME_TO_LOCK=30
 
 killall xss-lock
-xset s $IDLE_TIME_TO_DIM $IDLE_TIME_TO_LOCK
+run xset s $IDLE_TIME_TO_DIM $IDLE_TIME_TO_LOCK
 run xss-lock -n "$DIM_SCREEN" --transfer-sleep-lock -- "$LOCKER"
