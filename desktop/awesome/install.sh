@@ -1,5 +1,9 @@
 #!/bin/sh
 
-sudo ln -s $(pwd)/lock /usr/bin/
-sudo cp lock@.service /etc/systemd/system/
-sudo systemctl enable lock@$USER.service
+yaourt -S betterlockscreen xss-lock
+
+# create a link to the awesome config
+ln -s $(pwd)/config ~/.config/awesome
+
+# copy the keyboard config
+sudo cp 90-keyboard.conf /etc/X11/xorg.conf.d/
