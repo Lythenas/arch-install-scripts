@@ -1,6 +1,6 @@
 #!/bin/sh
 
-yaourt -S betterlockscreen xss-lock
+yaourt -S betterlockscreen xss-lock vicious dex
 
 # create a link to the awesome config
 ln -s $(pwd)/config ~/.config/awesome

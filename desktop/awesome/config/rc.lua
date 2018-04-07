@@ -20,6 +20,9 @@ local hotkeys_popup = require("awful.hotkeys_popup").widget
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
+
+-- widgets
+local vicious = require("vicious")
 -- }}}
 
 -- {{{ Error handling
@@ -122,12 +125,104 @@ mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- }}}
 
+-- {{{ Wibar
 -- Keyboard map indicator and switcher
 mykeyboardlayout = awful.widget.keyboardlayout()
 
--- {{{ Wibar
 -- Create a textclock widget
-mytextclock = wibox.widget.textclock()
+mytextclock = wibox.widget.textclock("%d.%m.%y %H:%M:%S", 0.5)
+
+-- other widgets
+--vicious.register(widget, wtype, format, interval, warg)
+
+-- Battery widget
+function create_battery_widget(battery_id)
+    local battery_progress = wibox.widget.progressbar()
+    local battery_text = wibox.widget.textbox()
+
+    local green_gradient = {
+        type = "linear",
+        from = { 0, 0 },
+        to = { 0, 20 },
+        stops = {
+            { 0, "#32cd32" },
+            { 1, "#28a428" },
+        },
+    }
+
+    local red_gradient = {
+        type = "linear",
+        from = { 0, 0 },
+        to = { 0, 20 },
+        stops = {
+            { 0, "#ff1a1a" },
+            { 1, "#e60000" },
+        },
+    }
+
+    local yellow_gradient = {
+        type = "linear",
+        from = { 0, 0 },
+        to = { 0, 20 },
+        stops = {
+            { 0, "#e6e600" },
+            { 1, "#b3b300" },
+        },
+    }
+
+    -- Create wibox with batwidget
+    local batbox = wibox.widget {
+        {
+            widget = battery_progress,
+            max_value = 1,
+            color = green_gradient,
+            background_color = red_gradient,
+            forced_width = 40,
+            margins = {
+                right = 1,
+            },
+        },
+        {
+            widget = battery_text,
+            valign = "center",
+            align = "center",
+        },
+        layout = wibox.layout.stack,
+    }
+
+    -- Register battery widget
+    vicious.register(battery_progress, vicious.widgets.bat, "$2", 1, battery_id)
+    vicious.register(battery_text, vicious.widgets.bat, function(widget, args)
+        local status = args[1]
+        local level = args[2]
+
+        -- hacky aproach to update background color of the progress bar
+        if status == "+" then
+            batbox.children[1].background_color = yellow_gradient
+        else
+            batbox.children[1].background_color = red_gradient
+        end
+
+        return "<span color='#fff'>"..level.."%</span>"
+    end, 1, battery_id)
+
+    batbox_tooltup = awful.tooltip({
+        objects = { batbox, },
+        timer_function = function()
+            local format = "<b><u>"..battery_id.."</u></b>\n<b>State:</b> $1\n<b>Level:</b> $2%\n<b>Remaining time:</b> $3\n<b>Wear level:</b> $4%\n<b>Rate:</b> $5W" 
+            return vicious.call(vicious.widgets.bat, format, battery_id)
+        end,
+    })
+
+    return batbox
+end
+
+local mybatteries = wibox.widget {
+    create_battery_widget("BAT0"),
+    create_battery_widget("BAT1"),
+    layout = wibox.layout.align.horizontal,
+}
+mybatteries = wibox.container.margin(mybatteries, 5, 5)
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -218,6 +313,7 @@ awful.screen.connect_for_each_screen(function(s)
         layout = wibox.layout.align.horizontal,
         { -- Left widgets
             layout = wibox.layout.fixed.horizontal,
+            spacing = 5,
             mylauncher,
             s.mytaglist,
             s.mypromptbox,
@@ -225,8 +321,10 @@ awful.screen.connect_for_each_screen(function(s)
         s.mytasklist, -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
+            spacing = 5,
             mykeyboardlayout,
             wibox.widget.systray(),
+            mybatteries,
             mytextclock,
             s.mylayoutbox,
         },
