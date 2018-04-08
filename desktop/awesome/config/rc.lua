@@ -11,6 +11,7 @@ local awful = require("awful")
 require("awful.autofocus")
 -- Widget and layout library
 local wibox = require("wibox")
+local vicious = require("vicious")
 -- Theme handling library
 local beautiful = require("beautiful")
 -- Notification library
@@ -20,9 +21,6 @@ local hotkeys_popup = require("awful.hotkeys_popup").widget
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
-
--- widgets
-local vicious = require("vicious")
 -- }}}
 
 -- {{{ Error handling
@@ -52,7 +50,7 @@ end
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
-beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
+beautiful.init("~/.config/awesome/themes/mytheme/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
 terminal = "alacritty"
@@ -341,6 +339,49 @@ root.buttons(gears.table.join(
 -- }}}
 
 -- {{{ Key bindings
+local MIN_BRIGHTNESS = 10
+
+function current_brightness()
+    local handle = io.popen("xbacklight -get")
+    local content = handle:read("*all")
+    handle:close()
+    return tonumber(content)
+end
+
+local backlight_notify_id = nil
+
+function change_screen_brightness(amount) 
+    if amount < 0 then
+        if current_brightness() <= MIN_BRIGHTNESS then return end
+        awful.spawn("xbacklight -dec "..-amount.." -time 10")
+    else
+        awful.spawn("xbacklight -inc "..amount.." -time 10")
+    end
+
+    local new_brightness = current_brightness()
+
+    local notification = naughty.notify {
+        text = new_brightness.."%",
+        title = "",
+        timeout = 2,
+        position = "bottom_middle",
+        ontop = true,
+        height = 200, 
+        width = 200,
+        --icon = "",
+        icon_size = 48,
+        fg = "#ffffff",
+        bg = "#000000", --"#00000080", -- black 50% transparent
+        border_width = 0,
+        --shape = ,
+        --opacity = 0,
+        replaces_id = backlight_notify_id,
+        destroy = function() backlight_notify_id = nil end,
+    }
+
+    backlight_notify_id = notification.id
+end
+
 globalkeys = gears.table.join(
     awful.key({ modkey,           }, "s",      hotkeys_popup.show_help,
               {description="show help", group="awesome"}),
@@ -448,9 +489,9 @@ globalkeys = gears.table.join(
             {description = "raise volume", group = "media"}),
     awful.key({}, "XF86AudioMicMute", function() awful.spawn("amixer set Capture toggle") end,
             {description = "mute/unmute mic", group = "media"}),
-    awful.key({}, "XF86MonBrightnessDown", function() awful.spawn("xbacklight -dec 10") end,
+    awful.key({}, "XF86MonBrightnessDown", function() change_screen_brightness(-10) end,
             {description = "turn screen brightness down", group = "media"}),
-    awful.key({}, "XF86MonBrightnessUp", function() awful.spawn("xbacklight -inc 10") end,
+    awful.key({}, "XF86MonBrightnessUp", function() change_screen_brightness(10) end,
             {description = "turn screen brightness up", group = "media"}),
     awful.key({}, "XF86Display", function() awful.spawn("") end,
             {description = "TODO", group = "media"}),
