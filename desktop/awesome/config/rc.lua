@@ -142,48 +142,23 @@ mytextclock = wibox.widget.textclock("%d.%m.%y %H:%M:%S", 0.5)
 --vicious.register(widget, wtype, format, interval, warg)
 
 -- Battery widget
+local BATTERY_WIDTH = 40
 local function create_battery_widget(battery_id)
     local battery_progress = wibox.widget.progressbar()
     local battery_text = wibox.widget.textbox()
 
-    local green_gradient = {
-        type = "linear",
-        from = { 0, 0 },
-        to = { 0, 20 },
-        stops = {
-            { 0, "#32cd32" },
-            { 1, "#28a428" },
-        },
-    }
-
-    local red_gradient = {
-        type = "linear",
-        from = { 0, 0 },
-        to = { 0, 20 },
-        stops = {
-            { 0, "#ff1a1a" },
-            { 1, "#e60000" },
-        },
-    }
-
-    local yellow_gradient = {
-        type = "linear",
-        from = { 0, 0 },
-        to = { 0, 20 },
-        stops = {
-            { 0, "#e6e600" },
-            { 1, "#b3b300" },
-        },
-    }
+    local green_bg = "#32cd32"
+    local red_bg = "#ff1a1a"
+    local yellow_bg = "#e6e600"
 
     -- Create wibox with batwidget
     local batbox = wibox.widget {
         {
             widget = battery_progress,
             max_value = 1,
-            color = green_gradient,
-            background_color = red_gradient,
-            forced_width = 40,
+            color = green_bg,
+            background_color = red_bg,
+            forced_width = BATTERY_WIDTH,
             margins = {
                 right = 1,
             },
@@ -201,15 +176,17 @@ local function create_battery_widget(battery_id)
     vicious.register(battery_text, vicious.widgets.bat, function (widget, args)
         local status = args[1]
         local level = args[2]
+        local color = "#ffffff"
 
         -- hacky aproach to update background color of the progress bar
         if status == "+" then
-            batbox.children[1].background_color = yellow_gradient
+            batbox.children[1].background_color = yellow_bg
+            color = "#000000"
         else
-            batbox.children[1].background_color = red_gradient
+            batbox.children[1].background_color = red_bg
         end
 
-        return "<span color='#fff'>" .. level .. "%</span>"
+        return "<span color='"..color.."'>" .. level .. "%</span>"
     end, 1, battery_id)
 
     batbox_tooltup = awful.tooltip {
