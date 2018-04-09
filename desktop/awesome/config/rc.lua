@@ -103,6 +103,19 @@ local function client_menu_toggle_fn()
         end
     end
 end
+
+function dump(o)
+   if type(o) == 'table' then
+      local s = '{ '
+      for k,v in pairs(o) do
+         if type(k) ~= 'number' then k = '"'..k..'"' end
+         s = s .. '['..k..'] = ' .. dump(v) .. ','
+      end
+      return s .. '} '
+   else
+      return tostring(o)
+   end
+end
 -- }}}
 
 -- {{{ Menu
@@ -247,20 +260,6 @@ local mybatteries = wibox.widget {
     create_battery_widget(),
 }
 
--- helper function
-function dump(o)
-   if type(o) == 'table' then
-      local s = '{ '
-      for k,v in pairs(o) do
-         if type(k) ~= 'number' then k = '"'..k..'"' end
-         s = s .. '['..k..'] = ' .. dump(v) .. ','
-      end
-      return s .. '} '
-   else
-      return tostring(o)
-   end
-end
-
 -- volume bar
 local lainvolume = lain.widget.alsabar {
     height = 60,
@@ -287,6 +286,12 @@ local myvolume = wibox.widget {
         markup = "Vol."
     },
     lainvolume.bar,
+}
+
+-- calendar popup
+local laincalendar = lain.widget.calendar {
+    attach_to = { mytextclock, },
+    cal = "env TERM=linux cal --color=always"
 }
 
 -- Create a wibox for each screen and add it
