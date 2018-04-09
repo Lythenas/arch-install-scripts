@@ -247,6 +247,7 @@ end
 -- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
 screen.connect_signal("property::geometry", set_wallpaper)
 
+-- create a global systray
 local mysystray = wibox.widget.systray()
 -- intially show the systray but hide it after 5 seconds
 -- this prevent potential issues with jetbrains toolbox not starting correctly
@@ -255,14 +256,15 @@ awful.spawn.easy_async("sleep 5", function (stdout, stderr, reason, exit_code)
     mysystray.visible = false
 end)
 
+-- create a global prompt
+local mypromptbox = awful.widget.prompt()
+
 awful.screen.connect_for_each_screen(function(s)
     set_wallpaper(s)
 
     -- Each screen has its own tag table.
     awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9", }, s, awful.layout.layouts[1])
 
-    -- Create a promptbox for each screen
-    s.mypromptbox = awful.widget.prompt()
     -- Create an imagebox widget which will contain an icon indicating which layout we're using.
     -- We need one layoutbox per screen.
     s.mylayoutbox = awful.widget.layoutbox(s)
@@ -287,7 +289,7 @@ awful.screen.connect_for_each_screen(function(s)
             spacing = 5,
             mylauncher,
             s.mytaglist,
-            s.mypromptbox,
+            mypromptbox,
         },
         s.mytasklist, -- Middle widget
         { -- Right widgets
@@ -368,7 +370,7 @@ globalkeys = gears.table.join(
         {description = "hide/show the systray", group = "awesome"}),
 
     -- Tag navigation and manipulation
-    awful.key({ modkey, }, "Left",   awful.tag.viewprev,
+    awful.key({ modkey, }, "Left", awful.tag.viewprev,
         {description = "view previous", group = "tag"}),
     awful.key({ modkey, }, "Right",  awful.tag.viewnext,
         {description = "view next", group = "tag"}),
@@ -424,21 +426,21 @@ globalkeys = gears.table.join(
         {description = "select previous", group = "layout"}),
 
     -- Screen navigation
-    awful.key({ modkey, "Control", }, "j", function () awful.screen.focus_relative(1) end,
+    awful.key({ modkey, }, "Up", function () awful.screen.focus_relative(1) end,
         {description = "focus the next screen", group = "screen"}),
-    awful.key({ modkey, "Control" }, "k", function () awful.screen.focus_relative(-1) end,
+    awful.key({ modkey, }, "Down", function () awful.screen.focus_relative(-1) end,
         {description = "focus the previous screen", group = "screen"}),
 
     -- Standard program / launcher
     awful.key({ modkey, }, "Return", function () awful.spawn(terminal) end,
         {description = "open a terminal", group = "launcher"}),
-    awful.key({ modkey, }, "r", function () awful.screen.focused().mypromptbox:run() end,
+    awful.key({ modkey, }, "r", function () mypromptbox:run() end,
         {description = "run prompt", group = "launcher"}),
     awful.key({ modkey, }, "x",
         function ()
             awful.prompt.run {
                 prompt       = "Run Lua code: ",
-                textbox      = awful.screen.focused().mypromptbox.widget,
+                textbox      = mypromptbox.widget,
                 exe_callback = awful.util.eval,
                 history_path = awful.util.get_cache_dir() .. "/history_eval"
             }
@@ -460,8 +462,8 @@ globalkeys = gears.table.join(
         {description = "turn screen brightness down", group = "media"}),
     awful.key({}, "XF86MonBrightnessUp", function() change_screen_brightness(10) end,
         {description = "turn screen brightness up", group = "media"}),
-    awful.key({}, "XF86Display", function() awful.spawn("") end,
-        {description = "TODO", group = "media"}),
+    --awful.key({}, "XF86Display", function() displayselect.prompt(mypromptbox.widget) end,
+        --{description = "TODO", group = "media"}),
     awful.key({}, "XF86WLAN", function() awful.spawn("toggle-wifi") end,
         {description = "turns wifi on/off", group = "media"}),
     awful.key({}, "XF86Tools", function() awful.spawn("") end,
