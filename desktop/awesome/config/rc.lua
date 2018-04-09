@@ -104,6 +104,7 @@ local function client_menu_toggle_fn()
     end
 end
 
+-- pretty print tables
 function dump(o)
    if type(o) == 'table' then
       local s = '{ '
@@ -255,7 +256,8 @@ local mybatteries = wibox.widget {
     
     wibox.widget {
         widget = wibox.widget.textbox,
-        markup = "Bat."
+        markup = "<span color='#ffffff'>" .. utf8.char(0xf240) .. "</span>",
+        font = "FontAwesome 10",
     },
     create_battery_widget(),
 }
@@ -283,7 +285,8 @@ local myvolume = wibox.widget {
 
     wibox.widget {
         widget = wibox.widget.textbox,
-        markup = "Vol."
+        markup = "<span color='#ffffff'>" .. utf8.char(0xf027) .. "</span>",
+        font = "FontAwesome 10",
     },
     lainvolume.bar,
 }
@@ -292,6 +295,18 @@ local myvolume = wibox.widget {
 local laincalendar = lain.widget.calendar {
     attach_to = { mytextclock, },
     cal = "env TERM=linux cal --color=always"
+}
+
+-- networking / wifi
+local wifi_icon = wibox.widget {
+    widget = wibox.widget.textbox,
+    markup = "<span color='#ffffff'>" .. utf8.char(0xf1eb) .. "</span>",
+    font = "FontAwesome 10",
+}
+local mynetwork = wibox.widget {
+    layout = wibox.layout.align.horizontal,
+
+    --wifi_icon,
 }
 
 -- Create a wibox for each screen and add it
@@ -371,6 +386,7 @@ awful.screen.connect_for_each_screen(function(s)
     -- Add widgets to the wibox
     s.mywibox:setup {
         layout = wibox.layout.align.horizontal,
+        spacing = 5,
         { -- Left widgets
             layout = wibox.layout.fixed.horizontal,
             spacing = 5,
@@ -378,11 +394,13 @@ awful.screen.connect_for_each_screen(function(s)
             s.mytaglist,
             mypromptbox,
         },
-        s.mytasklist, -- Middle widget
+        -- Middle widget
+        wibox.container.margin(s.mytasklist, 5, 5),
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             spacing = 5,
             myvolume,
+            mynetwork,
             mybatteries,
             mykeyboardlayout,
             mysystray, 
