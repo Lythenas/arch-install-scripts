@@ -1,6 +1,6 @@
 #!/bin/sh
 
-yaourt -S betterlockscreen xss-lock vicious dex arandr
+yaourt -S betterlockscreen xss-lock vicious dex arandr lain-git
 
 # create a link to the awesome config
 ln -s $(pwd)/config ~/.config/awesome

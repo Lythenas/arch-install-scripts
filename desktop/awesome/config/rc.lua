@@ -11,7 +11,7 @@ local awful = require("awful")
 require("awful.autofocus")
 -- Widget and layout library
 local wibox = require("wibox")
-local vicious = require("vicious")
+local lain = require("lain")
 -- Theme handling library
 local beautiful = require("beautiful")
 -- Notification library
@@ -138,18 +138,19 @@ mykeyboardlayout = awful.widget.keyboardlayout()
 -- Create a textclock widget
 mytextclock = wibox.widget.textclock("%d.%m.%y %H:%M:%S", 0.5)
 
--- other widgets
---vicious.register(widget, wtype, format, interval, warg)
-
 -- Battery widget
 local BATTERY_WIDTH = 40
-local function create_battery_widget(battery_id)
+local function create_battery_widget()
     local battery_progress = wibox.widget.progressbar()
     local battery_text = wibox.widget.textbox()
 
     local green_bg = "#32cd32"
     local red_bg = "#ff1a1a"
     local yellow_bg = "#e6e600"
+    local na_bg = "#ffffff"
+
+    local text_charging = "#000000"
+    local text_discharging = "#ffffff"
 
     -- Create wibox with batwidget
     local batbox = wibox.widget {
@@ -172,39 +173,59 @@ local function create_battery_widget(battery_id)
     }
 
     -- Register battery widget
-    vicious.register(battery_progress, vicious.widgets.bat, "$2", 1, battery_id)
-    vicious.register(battery_text, vicious.widgets.bat, function (widget, args)
-        local status = args[1]
-        local level = args[2]
-        local color = "#ffffff"
+    local options = {
+        timeout = 5,
+        batteries = { "BAT0", "BAT1", },
+        ac = "AC",
+        notify = "on",
+        n_perc = {5, 15}, -- critical and low battery percentages
+        settings = function ()
+            --widget:set_markup(bat_now.status .. " " .. bat_now.perc .. "%") 
+            local percentage = bat_now.perc
+            local status = bat_now.status
+            local level = 0
+            local markup = "N/A"
+            
+            if type(percentage) == "number" then
+                level = percentage / 100
+                markup = percentage .. "%"
+            end
 
-        -- hacky aproach to update background color of the progress bar
-        if status == "+" then
-            batbox.children[1].background_color = yellow_bg
-            color = "#000000"
-        else
-            batbox.children[1].background_color = red_bg
+            if status == "Discharging" then
+                markup = "<span color=\"" .. text_discharging .. "\">" .. markup .. "</span>"
+                battery_progress.background_color = red_bg
+            elseif status == "Charging" then
+                markup = "<span color=\"" .. text_charging .. "\">" .. markup .. "</span>"
+                battery_progress.background_color = yellow_bg
+            else
+                -- N/A or Full
+                markup = "<b color=\"" .. text_discharging .. "\">" .. markup .. "</b>"
+                battery_progress.background_color = na_bg
+            end
+
+            battery_progress:set_value(level)
+            battery_text:set_markup_silently(markup)
         end
+    }
+    local bat = lain.widget.bat(options)
 
-        return "<span color='"..color.."'>" .. level .. "%</span>"
-    end, 1, battery_id)
-
-    batbox_tooltup = awful.tooltip {
+    -- tooltip
+    batbox_tooltip = awful.tooltip {
         objects = { batbox, },
         timer_function = function()
-            local format = "<b><u>" .. battery_id .. "</u></b>\n<b>State:</b> $1\n<b>Level:</b> $2%\n<b>Remaining time:</b> $3\n<b>Wear level:</b> $4%\n<b>Rate:</b> $5W" 
-            return vicious.call(vicious.widgets.bat, format, battery_id)
+            local output = "Remaining time: " .. bat_now.time
+            for i = 1, #options.batteries do
+                local bat = options.batteries[i]
+                output = output .. string.format("\n\n<b>%s</b>\n%s\n%d%%", bat, bat_now.n_status[i], bat_now.n_perc[i])
+            end
+            return output
         end,
     }
 
     return batbox
 end
 
-local mybatteries = wibox.widget {
-    create_battery_widget("BAT0"),
-    create_battery_widget("BAT1"),
-    layout = wibox.layout.align.horizontal,
-}
+local mybatteries = create_battery_widget()
 mybatteries = wibox.container.margin(mybatteries, 5, 5)
 
 -- Create a wibox for each screen and add it
