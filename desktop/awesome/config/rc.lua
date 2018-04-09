@@ -139,7 +139,7 @@ mykeyboardlayout = awful.widget.keyboardlayout()
 mytextclock = wibox.widget.textclock("%d.%m.%y %H:%M:%S", 0.5)
 
 -- Battery widget
-local BATTERY_WIDTH = 40
+local BATTERY_WIDTH = 50
 local function create_battery_widget()
     local battery_progress = wibox.widget.progressbar()
     local battery_text = wibox.widget.textbox()
@@ -160,9 +160,6 @@ local function create_battery_widget()
             color = green_bg,
             background_color = red_bg,
             forced_width = BATTERY_WIDTH,
-            margins = {
-                right = 1,
-            },
         },
         {
             widget = battery_text,
@@ -199,7 +196,7 @@ local function create_battery_widget()
                 battery_progress.background_color = yellow_bg
             else
                 -- N/A or Full
-                markup = "<b color=\"" .. text_discharging .. "\">" .. markup .. "</b>"
+                markup = "<span color=\"" .. text_discharging .. "\"><b>" .. markup .. "</b></span>"
                 battery_progress.background_color = na_bg
             end
 
@@ -207,26 +204,90 @@ local function create_battery_widget()
             battery_text:set_markup_silently(markup)
         end
     }
-    local bat = lain.widget.bat(options)
+
+    local bar = lain.widget.bat(options)
 
     -- tooltip
     batbox_tooltip = awful.tooltip {
         objects = { batbox, },
         timer_function = function()
-            local output = "Remaining time: " .. bat_now.time
+            local output = "Remaining time: " .. bat_now.time .."\n"
+
+            if bat_now.ac_status == 0 then
+                output = output .. "AC unplugged"
+            else
+                output = output .. "AC plugged in"
+            end
+
             for i = 1, #options.batteries do
                 local bat = options.batteries[i]
-                output = output .. string.format("\n\n<b>%s</b>\n%s\n%d%%", bat, bat_now.n_status[i], bat_now.n_perc[i])
+                output = output .. string.format("\n\n<b>%s</b> (%s)\nLevel: %d%%", bat, bat_now.n_status[i], bat_now.n_perc[i])
             end
             return output
         end,
     }
 
+    batbox:buttons(gears.table.join(
+        awful.button({}, 1, function ()
+            bar.update()
+        end)
+    ))
+
     return batbox
 end
 
-local mybatteries = create_battery_widget()
-mybatteries = wibox.container.margin(mybatteries, 5, 5)
+local mybatteries = wibox.widget {
+    layout = wibox.layout.fixed.horizontal,
+    spacing = 5,
+    
+    wibox.widget {
+        widget = wibox.widget.textbox,
+        markup = "Bat."
+    },
+    create_battery_widget(),
+}
+
+-- helper function
+function dump(o)
+   if type(o) == 'table' then
+      local s = '{ '
+      for k,v in pairs(o) do
+         if type(k) ~= 'number' then k = '"'..k..'"' end
+         s = s .. '['..k..'] = ' .. dump(v) .. ','
+      end
+      return s .. '} '
+   else
+      return tostring(o)
+   end
+end
+
+-- volume bar
+local lainvolume = lain.widget.alsabar {
+    height = 60,
+    width = 50,
+    ticks = true,
+    settings = function ()
+    end,
+    colors = {
+        background = "#000000",
+        mute = "#ff1a1a",
+        unmute = "#32cd32",
+    },
+    notification_preset = {
+        timeout = 2, 
+        font = "Monospace 10",
+    },
+}
+local myvolume = wibox.widget {
+    layout = wibox.layout.fixed.horizontal,
+    spacing = 5,
+
+    wibox.widget {
+        widget = wibox.widget.textbox,
+        markup = "Vol."
+    },
+    lainvolume.bar,
+}
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -316,6 +377,7 @@ awful.screen.connect_for_each_screen(function(s)
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             spacing = 5,
+            myvolume,
             mybatteries,
             mykeyboardlayout,
             mysystray, 
@@ -471,11 +533,23 @@ globalkeys = gears.table.join(
         {description = "show the menubar", group = "launcher"}),
 
     -- Mediakeys
-    awful.key({}, "XF86AudioMute", function() awful.spawn("amixer set Master toggle") end,
+    awful.key({}, "XF86AudioMute",
+        function()
+            os.execute("amixer set Master toggle")
+            lainvolume.notify()
+        end,
         {description = "mute/unmute volume", group = "media"}),
-    awful.key({}, "XF86AudioLowerVolume", function() awful.spawn("amixer set Master 10%- unmute") end,
+    awful.key({}, "XF86AudioLowerVolume",
+        function()
+            os.execute("amixer set Master 10%- unmute")
+            lainvolume.notify()
+        end,
         {description = "lower volume", group = "media"}),
-    awful.key({}, "XF86AudioRaiseVolume", function() awful.spawn("amixer set Master 10%+ unmute") end,
+    awful.key({}, "XF86AudioRaiseVolume",
+        function()
+            os.execute("amixer set Master 10%+ unmute")
+            lainvolume.notify()
+        end,
         {description = "raise volume", group = "media"}),
     awful.key({}, "XF86AudioMicMute", function() awful.spawn("amixer set Capture toggle") end,
         {description = "mute/unmute mic", group = "media"}),
