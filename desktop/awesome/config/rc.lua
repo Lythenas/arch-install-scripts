@@ -21,6 +21,8 @@ local hotkeys_popup = require("awful.hotkeys_popup").widget
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
+--
+local icons = require("libs.icons")
 -- }}}
 
 -- {{{ Error handling
@@ -298,16 +300,22 @@ local laincalendar = lain.widget.calendar {
 }
 
 -- networking / wifi
-local wifi_icon = wibox.widget {
-    widget = wibox.widget.textbox,
-    markup = "<span color='#ffffff'>" .. utf8.char(0xf1eb) .. "</span>",
-    font = "FontAwesome 10",
-}
+local function wifi_widget()
+end
+
 local mynetwork = wibox.widget {
     layout = wibox.layout.align.horizontal,
 
-    --wifi_icon,
+    icons.wifi_on,
 }
+-- TODO clean this up and make this actuall do the right thing
+-- callable through the dbus using `echo -e "wifi_up()" | awesome-client`
+function wifi_up()
+    mynetwork.first = icons.wifi_on
+end
+function wifi_down()
+    mynetwork.first = icons.wifi_off
+end
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
@@ -830,4 +838,12 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 
 -- {{{ add autorun
 awful.spawn.with_shell("~/.config/awesome/autorun.sh")
+-- }}}
+
+-- {{{ external event receivers
+-- since the dbus api is barely usable and not documented
+-- use (global) functions and call them using `echo -e "something() | awesome-client"`
+function something()
+    naughty.notify {text = "ok" }
+end
 -- }}}
