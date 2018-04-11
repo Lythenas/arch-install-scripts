@@ -300,22 +300,93 @@ local laincalendar = lain.widget.calendar {
 }
 
 -- networking / wifi
-local function wifi_widget()
-end
+-- TODO make notifications pretty
+local wifi_interface = "wlp4s0"
 
 local mynetwork = wibox.widget {
     layout = wibox.layout.align.horizontal,
 
     icons.wifi_on,
 }
--- TODO clean this up and make this actuall do the right thing
--- callable through the dbus using `echo -e "wifi_up()" | awesome-client`
-function wifi_up()
+
+local function wifi_up()
     mynetwork.first = icons.wifi_on
+    mynetwork.opacity = 1
+    mynetwork:emit_signal("widget::redraw_needed")
+
+    local handle = io.popen("nmcli -t device")
+    local content = handle:read("*all")
+    handle:close()
+
+    local lines = gears.string.split(content, "\n")
+
+    for i, line in pairs(lines) do
+        if line and wifi_interface and line:find(wifi_interface) then
+            local items = gears.string.split(line, ":")
+            local wifi_name = items[4]
+            
+            naughty.notify {text = "Wifi connected\n"..wifi_name}
+        end
+    end
 end
-function wifi_down()
+local function wifi_down()
     mynetwork.first = icons.wifi_off
+    mynetwork.opacity = 1
+    mynetwork:emit_signal("widget::redraw_needed")
+
+    naughty.notify {text = "Wifi disconnected"}
 end
+local function wifi_searching()
+    mynetwork.first = icons.wifi_on
+    mynetwork.opacity = 0.5
+    mynetwork:emit_signal("widget::redraw_needed")
+end
+
+local function process_line(line)
+    if line:find(wifi_interface) then
+        local items = gears.string.split(line, " ")
+        local event = items[2]
+
+        if event == "connected" then
+            wifi_up()
+        elseif event == "unavailable" then
+            wifi_down()
+        elseif event == "disconnected" or event == "using" then
+            wifi_searching()
+        end
+    end
+end
+
+local function watch_wifi()
+    awful.spawn.with_line_callback("nmcli device monitor "..wifi_interface, {
+        stdout = function (line)
+            process_line(line)
+        end,
+        exit = function (reason, code)
+            watch_wifi()
+        end,
+    })
+end
+
+-- initial network check
+awful.spawn.with_line_callback("nmcli -t device", {
+    stdout = function (line)
+        if line:find(wifi_interface) then
+            local items = gears.string.split(line, ":")
+            local state = items[3]
+            
+            if state == "connected" then
+                wifi_up()
+            elseif state == "unavailable" then
+                wifi_down()
+            elseif state == "disconnected" or state:find("connecting") then
+                wifi_searching()
+            end
+        end
+    end,
+}) 
+watch_wifi()
+
 
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
