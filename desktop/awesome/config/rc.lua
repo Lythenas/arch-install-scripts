@@ -23,6 +23,7 @@ local hotkeys_popup = require("awful.hotkeys_popup").widget
 require("awful.hotkeys_popup.keys")
 --
 local icons = require("libs.icons")
+local battery_widget = require("libs.battery")
 -- }}}
 
 -- {{{ Error handling
@@ -105,20 +106,6 @@ local function client_menu_toggle_fn()
         end
     end
 end
-
--- pretty print tables
-function dump(o)
-   if type(o) == 'table' then
-      local s = '{ '
-      for k,v in pairs(o) do
-         if type(k) ~= 'number' then k = '"'..k..'"' end
-         s = s .. '['..k..'] = ' .. dump(v) .. ','
-      end
-      return s .. '} '
-   else
-      return tostring(o)
-   end
-end
 -- }}}
 
 -- {{{ Menu
@@ -155,114 +142,7 @@ mykeyboardlayout = awful.widget.keyboardlayout()
 mytextclock = wibox.widget.textclock("%d.%m.%y %H:%M:%S", 0.5)
 
 -- Battery widget
-local BATTERY_WIDTH = 50
-local function create_battery_widget()
-    local battery_progress = wibox.widget.progressbar()
-    local battery_text = wibox.widget.textbox()
-
-    local green_bg = "#32cd32"
-    local red_bg = "#ff1a1a"
-    local yellow_bg = "#e6e600"
-    local na_bg = "#ffffff"
-
-    local text_charging = "#000000"
-    local text_discharging = "#ffffff"
-
-    -- Create wibox with batwidget
-    local batbox = wibox.widget {
-        {
-            widget = battery_progress,
-            max_value = 1,
-            color = green_bg,
-            background_color = red_bg,
-            forced_width = BATTERY_WIDTH,
-        },
-        {
-            widget = battery_text,
-            valign = "center",
-            align = "center",
-        },
-        layout = wibox.layout.stack,
-    }
-
-    -- Register battery widget
-    local options = {
-        timeout = 5,
-        batteries = { "BAT0", "BAT1", },
-        ac = "AC",
-        notify = "on",
-        n_perc = {5, 15}, -- critical and low battery percentages
-        settings = function ()
-            --widget:set_markup(bat_now.status .. " " .. bat_now.perc .. "%") 
-            local percentage = bat_now.perc
-            local status = bat_now.status
-            local level = 0
-            local markup = "N/A"
-            
-            if type(percentage) == "number" then
-                level = percentage / 100
-                markup = percentage .. "%"
-            end
-
-            if status == "Discharging" then
-                markup = "<span color=\"" .. text_discharging .. "\">" .. markup .. "</span>"
-                battery_progress.background_color = red_bg
-            elseif status == "Charging" then
-                markup = "<span color=\"" .. text_charging .. "\">" .. markup .. "</span>"
-                battery_progress.background_color = yellow_bg
-            else
-                -- N/A or Full
-                markup = "<span color=\"" .. text_discharging .. "\"><b>" .. markup .. "</b></span>"
-                battery_progress.background_color = na_bg
-            end
-
-            battery_progress:set_value(level)
-            battery_text:set_markup_silently(markup)
-        end
-    }
-
-    local bar = lain.widget.bat(options)
-
-    -- tooltip
-    batbox_tooltip = awful.tooltip {
-        objects = { batbox, },
-        timer_function = function()
-            local output = "Remaining time: " .. bat_now.time .."\n"
-
-            if bat_now.ac_status == 0 then
-                output = output .. "AC unplugged"
-            else
-                output = output .. "AC plugged in"
-            end
-
-            for i = 1, #options.batteries do
-                local bat = options.batteries[i]
-                output = output .. string.format("\n\n<b>%s</b> (%s)\nLevel: %d%%", bat, bat_now.n_status[i], bat_now.n_perc[i])
-            end
-            return output
-        end,
-    }
-
-    batbox:buttons(gears.table.join(
-        awful.button({}, 1, function ()
-            bar.update()
-        end)
-    ))
-
-    return batbox
-end
-
-local mybatteries = wibox.widget {
-    layout = wibox.layout.fixed.horizontal,
-    spacing = 5,
-    
-    wibox.widget {
-        widget = wibox.widget.textbox,
-        markup = "<span color='#ffffff'>" .. utf8.char(0xf240) .. "</span>",
-        font = "FontAwesome 10",
-    },
-    create_battery_widget(),
-}
+local mybatteries = battery_widget()
 
 -- volume bar
 local lainvolume = lain.widget.alsabar {
