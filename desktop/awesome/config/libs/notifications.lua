@@ -20,6 +20,7 @@ local function get_progressbar_size()
 end
 
 return {
+    -- creates a new notification with the given title
     bar = function (title)
         local notification = nil
 
@@ -29,6 +30,9 @@ return {
         }
         
         return {
+            -- shows the notification if it is not shown
+            -- or updates the notification with the given level and alt text
+            -- and resets the timeout
             show = function (level, alt)
                 local size = get_progressbar_size()
 
