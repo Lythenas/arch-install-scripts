@@ -25,6 +25,7 @@ require("awful.hotkeys_popup.keys")
 local icons = require("libs.icons")
 local battery_widget = require("libs.battery")
 local backlight = require("libs.backlight")
+local volume = require("libs.volume")
 -- }}}
 
 -- {{{ Error handling
@@ -146,33 +147,7 @@ mytextclock = wibox.widget.textclock("%d.%m.%y %H:%M:%S", 0.5)
 local mybatteries = battery_widget()
 
 -- volume bar
-local lainvolume = lain.widget.alsabar {
-    height = 60,
-    width = 50,
-    ticks = true,
-    settings = function ()
-    end,
-    colors = {
-        background = "#000000",
-        mute = "#ff1a1a",
-        unmute = "#32cd32",
-    },
-    notification_preset = {
-        timeout = 2, 
-        font = "Monospace 10",
-    },
-}
-local myvolume = wibox.widget {
-    layout = wibox.layout.fixed.horizontal,
-    spacing = 5,
-
-    wibox.widget {
-        widget = wibox.widget.textbox,
-        markup = "<span color='#ffffff'>" .. utf8.char(0xf027) .. "</span>",
-        font = "FontAwesome 10",
-    },
-    lainvolume.bar,
-}
+local myvolume = volume.widget
 
 -- calendar popup
 local laincalendar = lain.widget.calendar {
@@ -473,23 +448,11 @@ globalkeys = gears.table.join(
         {description = "show the menubar", group = "launcher"}),
 
     -- Mediakeys
-    awful.key({}, "XF86AudioMute",
-        function()
-            os.execute("amixer set Master toggle")
-            lainvolume.notify()
-        end,
+    awful.key({}, "XF86AudioMute", volume.toggle,
         {description = "mute/unmute volume", group = "media"}),
-    awful.key({}, "XF86AudioLowerVolume",
-        function()
-            os.execute("amixer set Master 10%- unmute")
-            lainvolume.notify()
-        end,
+    awful.key({}, "XF86AudioLowerVolume", volume.decrease,
         {description = "lower volume", group = "media"}),
-    awful.key({}, "XF86AudioRaiseVolume",
-        function()
-            os.execute("amixer set Master 10%+ unmute")
-            lainvolume.notify()
-        end,
+    awful.key({}, "XF86AudioRaiseVolume", volume.increase,
         {description = "raise volume", group = "media"}),
     awful.key({}, "XF86AudioMicMute", function() awful.spawn("amixer set Capture toggle") end,
         {description = "mute/unmute mic", group = "media"}),
