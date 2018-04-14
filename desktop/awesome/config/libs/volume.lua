@@ -57,7 +57,7 @@ gears.timer {
 
 update(false)
 
-return {
+local volume = {
     widget = iconbox,
     mixer = function ()
         awful.spawn("alsamixer")
@@ -81,3 +81,9 @@ return {
 
     end,
 }
+
+iconbox:buttons(gears.table.join(
+    awful.button({}, 1, function () volume.toggle() end)
+))
+
+return volume
