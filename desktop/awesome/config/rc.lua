@@ -26,6 +26,7 @@ local icons = require("libs.icons")
 local battery_widget = require("libs.battery")
 local backlight = require("libs.backlight")
 local volume = require("libs.volume")
+local displayselect = require("libs.displayselect")
 -- }}}
 
 -- {{{ Error handling
@@ -316,7 +317,10 @@ awful.screen.connect_for_each_screen(function(s)
     s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, tasklist_buttons)
 
     -- Create the wibox
-    s.mywibox = awful.wibar({ position = "top", screen = s, })
+    s.mywibox = awful.wibar {
+        position = "top",
+        screen = s,
+    }
 
     -- Add widgets to the wibox
     s.mywibox:setup {
@@ -460,8 +464,8 @@ globalkeys = gears.table.join(
         {description = "turn screen brightness down", group = "media"}),
     awful.key({}, "XF86MonBrightnessUp", function() backlight.change(10) end,
         {description = "turn screen brightness up", group = "media"}),
-    --awful.key({}, "XF86Display", function() displayselect.prompt(mypromptbox.widget) end,
-        --{description = "TODO", group = "media"}),
+    awful.key({}, "XF86Display", function() displayselect.prompt(mypromptbox.widget) end,
+        {description = "display options prompt", group = "media"}),
     awful.key({}, "XF86WLAN", function() awful.spawn("toggle-wifi") end,
         {description = "turns wifi on/off", group = "media"}),
     awful.key({}, "XF86Tools", function() awful.spawn("") end,
