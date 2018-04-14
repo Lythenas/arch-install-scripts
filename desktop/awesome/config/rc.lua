@@ -11,7 +11,6 @@ local awful = require("awful")
 require("awful.autofocus")
 -- Widget and layout library
 local wibox = require("wibox")
-local lain = require("lain")
 -- Theme handling library
 local beautiful = require("beautiful")
 -- Notification library
@@ -151,10 +150,20 @@ local mybatteries = battery_widget()
 local myvolume = volume.widget
 
 -- calendar popup
-local laincalendar = lain.widget.calendar {
-    attach_to = { mytextclock, },
-    cal = "env TERM=linux cal --color=always"
+local mycalendar = awful.widget.calendar_popup.month {
+    position = "tr",
 }
+-- attach signals, because the on_hover argument of :attach does not work
+mytextclock:connect_signal("mouse::enter", function ()
+    mycalendar:call_calendar(0)
+    mycalendar.visible = true
+end)
+mytextclock:connect_signal("mouse::leave", function ()
+    mycalendar.visible = false
+end)
+mycalendar:attach(mytextclock, "tr", {
+    on_hover = false
+})
 
 -- networking / wifi
 -- TODO make notifications pretty
