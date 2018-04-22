@@ -23,8 +23,10 @@ IDLE_TIME_TO_DIM=300 # 5min
 IDLE_TIME_TO_LOCK=30
 
 killall xss-lock
-run xset s $IDLE_TIME_TO_DIM $IDLE_TIME_TO_LOCK
-run xss-lock -n "$DIM_SCREEN" --transfer-sleep-lock -- "$LOCKER"
+#run xset s $IDLE_TIME_TO_DIM $IDLE_TIME_TO_LOCK
+#run xss-lock -n "$DIM_SCREEN" --transfer-sleep-lock -- "$LOCKER"
+killall light-locker
+#light-locker --no-late-locking --lock-on-suspend --lock-on-lid --idle-hint
 # }}}
 
 # {{{ autostart .desktop apps
@@ -33,5 +35,5 @@ run dex -a -e AWESOME
 # }}}
 
 # {{{ more autostart apps
-run np-applet
+run nm-applet
 # }}}
