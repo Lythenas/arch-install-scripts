@@ -31,7 +31,7 @@ killall light-locker
 
 # {{{ autostart .desktop apps
 # the -e AWESOME makes sure that gnome or kde only apps don't start
-dex -adv -e AWESOME > test.txt
+dex -a -e AWESOME > test.txt
 # }}}
 
 # {{{ more autostart apps
