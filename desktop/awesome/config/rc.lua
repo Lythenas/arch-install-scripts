@@ -376,7 +376,7 @@ globalkeys = gears.table.join(
         {description = "reload awesome", group = "awesome"}),
     awful.key({ modkey, "Control", alt, "Shift", }, "q", awesome.quit,
         {description = "quit awesome", group = "awesome"}),
-    awful.key({ modkey, }, "l", function () awful.spawn("loginctl lock-session") end,
+    awful.key({ modkey, "Control", }, "l", function () awful.spawn("light-locker-command -l") end,
         {description = "lock awesome", group = "awesome"}),
 
     awful.key({ modkey, "Shift", }, "s", function () mysystray.visible = not mysystray.visible end,
