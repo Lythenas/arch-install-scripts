@@ -191,7 +191,7 @@ local function wifi_up()
             local items = gears.string.split(line, ":")
             local wifi_name = items[4]
             
-            naughty.notify {text = "Wifi connected\n"..wifi_name}
+            --naughty.notify {text = "Wifi connected\n"..wifi_name}
         end
     end
 end
@@ -200,7 +200,7 @@ local function wifi_down()
     mynetwork.opacity = 1
     mynetwork:emit_signal("widget::redraw_needed")
 
-    naughty.notify {text = "Wifi disconnected"}
+    --naughty.notify {text = "Wifi disconnected"}
 end
 local function wifi_searching()
     mynetwork.first = icons.wifi_on

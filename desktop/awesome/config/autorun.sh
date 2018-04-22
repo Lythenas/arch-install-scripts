@@ -31,3 +31,7 @@ run xss-lock -n "$DIM_SCREEN" --transfer-sleep-lock -- "$LOCKER"
 # the -e AWESOME makes sure that gnome or kde only apps don't start
 run dex -a -e AWESOME
 # }}}
+
+# {{{ more autostart apps
+run np-applet
+# }}}
