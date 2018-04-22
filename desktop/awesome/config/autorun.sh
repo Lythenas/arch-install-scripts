@@ -31,9 +31,10 @@ killall light-locker
 
 # {{{ autostart .desktop apps
 # the -e AWESOME makes sure that gnome or kde only apps don't start
-run dex -a -e AWESOME
+dex -adv -e AWESOME > test.txt
 # }}}
 
 # {{{ more autostart apps
+run ~/.config/awesome/autorun-delayed.sh
 run nm-applet
 # }}}
