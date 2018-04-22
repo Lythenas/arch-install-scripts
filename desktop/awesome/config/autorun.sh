@@ -17,7 +17,7 @@ function run {
 # dim screen 30 secs before that
 # and to to sleep 10 mins after locking
 DIM_SCREEN=~/.config/awesome/lock/dim-screen.sh
-LOCKER=~/.config/awesome/lock/locker.sh 
+LOCKER=~/bin/lock #~/.config/awesome/lock/locker.sh 
 
 IDLE_TIME_TO_DIM=300 # 5min
 IDLE_TIME_TO_LOCK=30
