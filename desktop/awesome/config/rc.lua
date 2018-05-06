@@ -15,7 +15,6 @@ local wibox = require("wibox")
 local beautiful = require("beautiful")
 -- Notification library
 local naughty = require("naughty")
-local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
@@ -131,9 +130,17 @@ mylauncher = awful.widget.launcher {
     image = beautiful.awesome_icon,
     menu = mymainmenu
 }
+-- }}}
 
--- Menubar configuration
-menubar.utils.terminal = terminal -- Set the terminal for applications that require it
+-- {{{ Lancher / Prompt
+local launcher = {
+    apps = function ()
+        awful.spawn("rofi -show drun -show-icons")
+    end,
+    run_prompt = function ()
+        awful.spawn("rofi -show run")
+    end,
+}
 -- }}}
 
 -- {{{ Wibar
@@ -447,7 +454,7 @@ globalkeys = gears.table.join(
     -- Standard program / launcher
     awful.key({ modkey, }, "Return", function () awful.spawn(terminal) end,
         {description = "open a terminal", group = "launcher"}),
-    awful.key({ modkey, }, "r", function () mypromptbox:run() end,
+    awful.key({ modkey, }, "r", function () launcher.run_prompt() end,
         {description = "run prompt", group = "launcher"}),
     awful.key({ modkey, }, "x",
         function ()
@@ -459,8 +466,8 @@ globalkeys = gears.table.join(
             }
         end,
         {description = "lua execute prompt", group = "launcher"}),
-    awful.key({ modkey, }, "p", function() menubar.show() end,
-        {description = "show the menubar", group = "launcher"}),
+    awful.key({ modkey, }, "p", function() launcher.apps() end,
+        {description = "show the app lancher (rofi)", group = "launcher"}),
 
     -- Mediakeys
     awful.key({}, "XF86AudioMute", volume.toggle,
