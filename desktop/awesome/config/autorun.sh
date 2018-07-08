@@ -29,6 +29,10 @@ killall light-locker
 #light-locker --no-late-locking --lock-on-suspend --lock-on-lid --idle-hint
 # }}}
 
+# {{{ x composite window-effects manager
+run xcompmgr
+# }}}
+
 # {{{ autostart .desktop apps
 # the -e AWESOME makes sure that gnome or kde only apps don't start
 dex -a -e AWESOME > test.txt
