@@ -18,5 +18,6 @@ echo "==== Finished installing Rust\n"
 echo "==== Now installing Cargo plugins"
 
 cargo install clippy
+rustup component add rustfmt-preview --toolchain nightly
 
 echo "==== Done installing Cargo plugins"
