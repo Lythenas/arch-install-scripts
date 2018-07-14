@@ -731,7 +731,7 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 -- }}}
 
 -- {{{ notifications
-naughty.config.presets.low = 20
+naughty.config.presets.low.timeout = 20
 naughty.config.defaults.timeout = 20
 -- }}}
 
