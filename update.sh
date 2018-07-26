@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
 
-yaourt -Syua
+aurman -Syu
 rustup update

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-yaourt -S betterlockscreen xss-lock dex arandr xcompmgr
+aurman -S betterlockscreen xss-lock dex arandr xcompmgr
 
 # create a link to the awesome config
 ln -s $(pwd)/config ~/.config/awesome
