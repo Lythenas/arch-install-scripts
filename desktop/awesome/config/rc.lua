@@ -388,6 +388,10 @@ globalkeys = gears.table.join(
 
     awful.key({ modkey, "Shift", }, "s", function () mysystray.visible = not mysystray.visible end,
         {description = "hide/show the systray", group = "awesome"}),
+    awful.key({ modkey, }, "+", function () awful.spawn("~/.config/awesome/scripts/mountmenu.sh") end,
+        {description = "show mount menu", group = "awesome"}),
+    awful.key({ modkey, }, "#", function () awful.spawn("~/.config/awesome/scripts/umountmenu.sh") end,
+        {description = "show unmount menu", group = "awesome"}),
 
     -- Tag navigation and manipulation
     awful.key({ modkey, }, "Left", awful.tag.viewprev,
@@ -736,7 +740,7 @@ naughty.config.defaults.timeout = 20
 -- }}}
 
 -- {{{ autorun
-awful.spawn.with_shell("~/.config/awesome/autorun.sh")
+awful.spawn.with_shell("~/.config/awesome/scripts/autorun.sh")
 -- }}}
 
 -- {{{ external event receivers
