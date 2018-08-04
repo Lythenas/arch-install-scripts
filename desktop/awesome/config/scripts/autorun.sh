@@ -16,8 +16,8 @@ function run {
 # lock after 3 mins of inactivity,
 # dim screen 30 secs before that
 # and to to sleep 10 mins after locking
-DIM_SCREEN=~/.config/awesome/lock/dim-screen.sh
-LOCKER=~/bin/lock #~/.config/awesome/lock/locker.sh 
+DIM_SCREEN=~/.config/awesome/scripts/dim-screen.sh
+LOCKER=~/bin/lock #~/.config/awesome/lock/locker.sh
 
 IDLE_TIME_TO_DIM=300 # 5min
 IDLE_TIME_TO_LOCK=30
@@ -39,6 +39,6 @@ dex -a -e AWESOME > test.txt
 # }}}
 
 # {{{ more autostart apps
-run ~/.config/awesome/autorun-delayed.sh
+run ~/.config/awesome/scripts/autorun-delayed.sh
 run nm-applet
 # }}}
