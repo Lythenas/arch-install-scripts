@@ -11,4 +11,11 @@ echo $device
 location=$(lsblk -lp -o "MOUNTPOINT" $device | tail -n +2)
 [[ "$location" = "" ]] && exit 2
 
-gio mount -u $location && notify-send "$device has been unmounted from $location"
+gio mount -u $location
+
+if [[ $? -eq 0 ]]
+then
+    notify-send "$device has been unmounted from $location"
+else
+    notify-send -u critical "Failed to unmount $device from $location"
+fi
