@@ -125,7 +125,7 @@
     #   %n  progress value if set without any extra characters
     #   %%  Literal %
     # Markup is allowed
-    format = "<b>%s</b>\n%b"
+    format = "<b>%a: %s</b>\n%b"
 
     # Alignment of message text.
     # Possible values are "left", "center" and "right".
@@ -159,7 +159,7 @@
     ### Icons ###
 
     # Align icons left/right/off
-    icon_position = off
+    icon_position = left
 
     # Scale larger icons down to this size, set to 0 to disable
     max_icon_size = 32
@@ -196,7 +196,7 @@
     # Print a notification on startup.
     # This is mainly for error detection, since dbus (re-)starts dunst
     # automatically after a crash.
-    startup_notification = false
+    startup_notification = true
 
     ### Legacy
 
@@ -237,7 +237,7 @@
     # On the US keyboard layout "grave" is normally above TAB and left
     # of "1". Make sure this key actually exists on your keyboard layout,
     # e.g. check output of 'xmodmap -pke'
-    history = ctrl+grave
+    history = mod4+asciicircum # key above tab on qwerty layout
 
     # Context menu.
     context = ctrl+shift+period
@@ -323,4 +323,19 @@
 #    summary = *twitter.com*
 #    urgency = normal
 #
+[awesome-percentage]
+    appname = awesomewm
+    summary = {Backlight,Volume}*
+    urgency = low
+    history_ignore = yes
+[no-summary]
+    summary = ""
+    format = "<b>%a</b>\n%b"
+[no-appname]
+    appname = ""
+    format = "<b>%s</b>\n%b"
+[no-summary-no-appname]
+    appname = ""
+    summary = ""
+    format = "%b"
 # vim: ft=cfg
