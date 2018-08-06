@@ -14,11 +14,15 @@ local wibox = require("wibox")
 -- Theme handling library
 local beautiful = require("beautiful")
 -- Notification library
-local naughty = require("naughty")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
+--
+-- start dunst here and replace naughty
+awful.spawn.with_shell("dunst")
+package.preload.naughty = function () return require("libs.naughty_replacement") end
+local naughty = require("libs.naughty_replacement")
 --
 local icons = require("libs.icons")
 local battery_widget = require("libs.battery")
@@ -197,8 +201,8 @@ local function wifi_up()
         if line and wifi_interface and line:find(wifi_interface) then
             local items = gears.string.split(line, ":")
             local wifi_name = items[4]
-            
-            --naughty.notify {text = "Wifi connected\n"..wifi_name}
+
+            naughty.notify {text = "Wifi connected\n"..wifi_name}
         end
     end
 end
@@ -207,7 +211,7 @@ local function wifi_down()
     mynetwork.opacity = 1
     mynetwork:emit_signal("widget::redraw_needed")
 
-    --naughty.notify {text = "Wifi disconnected"}
+    naughty.notify {text = "Wifi disconnected"}
 end
 local function wifi_searching()
     mynetwork.first = icons.wifi_on
@@ -662,6 +666,19 @@ awful.rules.rules = {
     -- Set Firefox to always map on the tag named "2" on screen 1.
     -- { rule = { class = "Firefox" },
     --   properties = { screen = 1, tag = "2" } },
+
+    {
+        rule_any = {
+            class = {
+                "Dunst"
+            }
+        },
+        properties = {
+            floating = true,
+            focus = false,
+            raise = true,
+        },
+    }
 }
 -- }}}
 
@@ -732,11 +749,6 @@ end)
 
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
--- }}}
-
--- {{{ notifications
-naughty.config.presets.low.timeout = 20
-naughty.config.defaults.timeout = 20
 -- }}}
 
 -- {{{ autorun

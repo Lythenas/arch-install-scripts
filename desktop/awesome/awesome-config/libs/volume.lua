@@ -75,7 +75,7 @@ local volume = {
         update(true)
     end,
     mute = function (amount)
-        
+
     end,
     unmute = function (amount)
 

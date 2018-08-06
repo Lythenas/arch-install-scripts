@@ -26,7 +26,7 @@ local function change(amount)
     else
         awful.spawn("xbacklight -inc " .. amount .. " -time 10")
     end
-    
+
     local level = current_brightness()
 
     notification.show(level)

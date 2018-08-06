@@ -3,7 +3,6 @@
 --
 -- Author: Matthias Seiffert
 local awful = require("awful")
-local naughty = require("naughty")
 local gears = require("gears")
 
 local choises = {

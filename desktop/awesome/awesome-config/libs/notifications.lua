@@ -28,7 +28,7 @@ return {
             timeout = 2,
             font = "Monospace 10",
         }
-        
+
         return {
             -- shows the notification if it is not shown
             -- or updates the notification with the given level and alt text
