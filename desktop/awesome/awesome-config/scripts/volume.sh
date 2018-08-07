@@ -9,6 +9,7 @@
 ###   if the first parameter is toggle then the mute state is toggled
 ###   amount can be negative to decrease volume
 
+dir=$(dirname $0)
 tag=volume
 
 if [[ $1 -eq "toggle" ]]
@@ -44,7 +45,7 @@ else
     fi
 fi
 
-last_id=$(./notification_id.sh $tag)
-new_id=$(./bar_notification.sh "$summary" "$icon" $volume $last_id)
-./notification_id.sh $tag $new_id > /dev/null
+last_id=$($dir/notification_id.sh $tag)
+new_id=$($dir/bar_notification.sh "$summary" "$icon" $volume $last_id)
+$dir/notification_id.sh $tag $new_id > /dev/null
 

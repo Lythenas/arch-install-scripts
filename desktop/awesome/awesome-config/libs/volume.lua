@@ -5,7 +5,6 @@ local gears = require("gears")
 local awful = require("awful")
 local wibox = require("wibox")
 local icons = require("libs.icons")
-local notifications = require("libs.notifications")
 
 local iconbox = wibox.widget {
     layout = wibox.layout.align.horizontal,
@@ -13,18 +12,14 @@ local iconbox = wibox.widget {
 }
 
 local function amixer(callback)
-    local cmd = "amixer get Master | sed -n '/.*\\[\\([0-9]*\\)%\\].*\\[\\(.*\\)\\].*/s//\\1 \\2/p'"
-    awful.spawn.easy_async({"bash", "-c", cmd}, function (stdout, stderr, reason, code)
+    local cmd = "(z=$(amixer get Master); (echo $z | grep -Po \"[0-9]+(?=%)\" | tail -1); (echo $z | grep -Fo \"[off]\" | tail -1))"
+    awful.spawn.easy_async_with_shell(cmd, function (stdout, stderr, reason, code)
         local lines = gears.string.split(stdout, "\n")
-        local info = gears.string.split(lines[1], " ")
-        local level = tonumber(info[1])
-        local muted = info[2] == "off"
-
+        local level = tonumber(lines[1])
+        local muted = not not lines[2]
         callback(level, muted)
     end)
 end
-
-local notification = notifications.bar("Volume")
 
 local function update(notify)
     amixer(function (level, muted)
@@ -36,14 +31,6 @@ local function update(notify)
             iconbox.first = icons.volume_medium
         else
             iconbox.first = icons.volume_low
-        end
-
-        if notify then
-            if muted then
-                notification.show(level, "Muted")
-            else
-                notification.show(level)
-            end
         end
     end)
 end
@@ -63,22 +50,18 @@ local volume = {
         awful.spawn("alsamixer")
     end,
     toggle = function ()
-        os.execute("amixer set Master toggle")
+        awful.spawn.with_shell("~/.config/awesome/scripts/volume.sh toggle")
         update(true)
     end,
     increase = function (amount)
-        os.execute("amixer set Master 10%+")
+        if amount == nil then amount = 10 end
+        awful.spawn.with_shell("~/.config/awesome/scripts/volume.sh "..tostring(amount))
         update(true)
     end,
     decrease = function (amount)
-        os.execute("amixer set Master 10%-")
+        if amount == nil then amount = 10 end
+        awful.spawn.with_shell("~/.config/awesome/scripts/volume.sh -"..tostring(amount))
         update(true)
-    end,
-    mute = function (amount)
-
-    end,
-    unmute = function (amount)
-
     end,
 }
 
