@@ -123,10 +123,10 @@ let g:airline_symbols.notexists = '∄'
 
 " Search down into subfolders
 set path+=**
-" display matches when tab completing
+" display matches when tab completing in cmd mode
 set wildmenu
 " allow wildcards e.g. *
-set wildmode=full
+set wildmode=longest:full,full
 
 " :find <filename in path> opens file in new buffer
 " -> :find <TAB> tab completion
@@ -189,6 +189,10 @@ nnoremap <C-H> <C-W><C-H>
 " SNIPPETS }}}
 
 " {{{ OTHER
+
+" show relative line numbers on the left
+set nonumber
+set relativenumber
 
 " mark two or more spaces after some text as an error
 syntax match DoubleSpace /\S\zs {2,}/
