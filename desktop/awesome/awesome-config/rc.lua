@@ -202,7 +202,10 @@ local function wifi_up()
             local items = gears.string.split(line, ":")
             local wifi_name = items[4]
 
-            naughty.notify {text = "Wifi connected\n"..wifi_name}
+            naughty.notify {
+                text = "Wifi connected\n"..wifi_name,
+                timeout = 3,
+            }
         end
     end
 end
@@ -211,7 +214,10 @@ local function wifi_down()
     mynetwork.opacity = 1
     mynetwork:emit_signal("widget::redraw_needed")
 
-    naughty.notify {text = "Wifi disconnected"}
+    naughty.notify {
+        text = "Wifi disconnected",
+        timeout = 3,
+    }
 end
 local function wifi_searching()
     mynetwork.first = icons.wifi_on
@@ -251,7 +257,7 @@ awful.spawn.with_line_callback("nmcli -t device", {
         if line:find(wifi_interface) then
             local items = gears.string.split(line, ":")
             local state = items[3]
-            
+
             if state == "connected" then
                 wifi_up()
             elseif state == "unavailable" then
@@ -261,7 +267,7 @@ awful.spawn.with_line_callback("nmcli -t device", {
             end
         end
     end,
-}) 
+})
 watch_wifi()
 
 
@@ -362,7 +368,7 @@ awful.screen.connect_for_each_screen(function(s)
             mynetwork,
             mybatteries,
             mykeyboardlayout,
-            mysystray, 
+            mysystray,
             mytextclock,
             s.mylayoutbox,
         },
